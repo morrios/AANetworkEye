@@ -8,13 +8,6 @@
 
 Pod::Spec.new do |s|
 
-  # ―――  Spec Metadata  ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
-  #
-  #  These will help people to find your library, and whilst it
-  #  can feel like a chore to fill in it's definitely to your advantage. The
-  #  summary should be tweet-length, and the description more in depth.
-  #
-
   s.name         = "AANetworkEye"
   s.version      = "0.1"
   s.summary      = "iOS 网络监控"
@@ -24,9 +17,10 @@ Pod::Spec.new do |s|
                    DESC
 
   s.homepage     = 'https://github.com/morrios/AANetworkEye'
-  s.license      = { :type => 'MIT', :file => 'LICENSE' }
+  s.license      =  'MIT'
 
   s.author             = { 'morrios' => '13720036734@163.com' }
+  s.ios.deployment_target = '8.0'
 
   s.source       ={ :git => 'https://github.com/morrios/AANetworkEye.git', :tag => s.version.to_s }
 
