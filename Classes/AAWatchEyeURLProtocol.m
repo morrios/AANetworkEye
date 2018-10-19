@@ -8,8 +8,9 @@
 
 #import "AAWatchEyeURLProtocol.h"
 #import "AAURLSessionConfiguration.h"
-#import "NEHTTPModel.h"
+#import "AAHTTPModel.h"
 #import "AAHTTPModelCache.h"
+#import "AAHTTPModel.h"
 
 static NSString * const hasInitKey = @"AAWatchEyeURLProtocolKey";
 
@@ -19,10 +20,10 @@ static NSString * const hasInitKey = @"AAWatchEyeURLProtocolKey";
 @property (nonatomic, strong) NSURLResponse *response;
 @property (nonatomic, strong) NSMutableData *data;
 @property (nonatomic, strong) NSDate *startDate;
-@property (nonatomic,strong) NEHTTPModel *ne_HTTPModel;
+@property (nonatomic,strong) AAHTTPModel *ne_HTTPModel;
 
 @end
-
+ 
 @implementation AAWatchEyeURLProtocol
 @synthesize ne_HTTPModel;
 + (void)setEnabled:(BOOL)enabled {
@@ -41,8 +42,12 @@ static NSString * const hasInitKey = @"AAWatchEyeURLProtocolKey";
         SEL sel = NSSelectorFromString(@"registerSchemeForCustomProtocol:");
         if ([cls respondsToSelector:sel]) {
             // 通过http和https的请求，同理可通过其他的Scheme 但是要满足ULR Loading System
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
             [cls performSelector:sel withObject:@"http"];
             [cls performSelector:sel withObject:@"https"];
+#pragma clang diagnostic pop
+            
         }
         
     }else{
@@ -92,8 +97,8 @@ static NSString * const hasInitKey = @"AAWatchEyeURLProtocolKey";
     self.connection = [[NSURLConnection alloc] initWithRequest:[[self class] canonicalRequestForRequest:self.request] delegate:self startImmediately:YES];
 #pragma clang diagnostic pop
     
-    ne_HTTPModel=[[NEHTTPModel alloc] init];
-    ne_HTTPModel.ne_request=self.request;
+    ne_HTTPModel=[[AAHTTPModel alloc] init];
+    ne_HTTPModel.aa_request=self.request;
     
     ne_HTTPModel.startDateString=[self stringWithDate:[NSDate date]];
     ne_HTTPModel.startTimestamp = [NSString stringWithFormat:@"%ld",time(NULL)];
@@ -105,7 +110,7 @@ static NSString * const hasInitKey = @"AAWatchEyeURLProtocolKey";
 
 - (void)stopLoading
 {
-    ne_HTTPModel.ne_response=(NSHTTPURLResponse *)self.response;
+    ne_HTTPModel.aa_response=(NSHTTPURLResponse *)self.response;
     ne_HTTPModel.endDateString=[self stringWithDate:[NSDate date]];
     [self.connection cancel];
     NSString *xmlString = [self dataToReadStr:self.data];

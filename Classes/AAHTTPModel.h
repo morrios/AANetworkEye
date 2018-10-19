@@ -1,22 +1,23 @@
 //
-//  NEHTTPModel.h
-//  NetworkEye
+//  AAHTTPModel.h
+//  merchant
 //
-//  Created by coderyi on 15/11/4.
-//  Copyright © 2015年 coderyi. All rights reserved.
+//  Created by beequick on 2018/10/18.
+//  Copyright © 2018 beequick. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
-NS_ASSUME_NONNULL_BEGIN
-@interface NEHTTPModel : NSObject
 
-@property (nonatomic,strong) NSURLRequest *ne_request;
-@property (nonatomic,strong) NSHTTPURLResponse *ne_response;
+NS_ASSUME_NONNULL_BEGIN
+
+@interface AAHTTPModel : NSObject
+@property (nonatomic,strong) NSURLRequest *aa_request;
+@property (nonatomic,strong) NSHTTPURLResponse *aa_response;
 @property (nonatomic,assign) double myID;
 @property (nonatomic,strong) NSString *startDateString;
 @property (nonatomic,strong) NSString *startTimestamp;
 @property (nonatomic,strong) NSString *endDateString;
-
+  
 //request
 @property (nonatomic,strong) NSString *requestURLString;
 @property (nonatomic,strong) NSString *requestCachePolicy;
@@ -38,6 +39,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,strong) NSString *JsonRead;
 @property (nonatomic,strong) NSString *mapPath;
 @property (nonatomic,strong) NSString *JSONStr;
-
 @end
+
 NS_ASSUME_NONNULL_END

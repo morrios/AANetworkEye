@@ -9,11 +9,11 @@
 Pod::Spec.new do |s|
 
   s.name         = "AANetworkEye"
-  s.version      = "0.1"
+  s.version      = "0.2"
   s.summary      = "iOS 网络监控"
 
   s.description  = <<-DESC
-一个监控APP内网络请求的库
+一个监控APP内网络请求的库,缓存到本地
                    DESC
 
   s.homepage     = 'https://github.com/morrios/AANetworkEye'

@@ -7,8 +7,6 @@
 //
 
 #import "AAHTTPModelCache.h"
-//#import "FMDatabase.h"
-//#import "FMDatabaseQueue.h"
 #import "NSObject+AA.h"
 
 static NSString *const AAHttpRequestCache = @"AA_httpRequestCache.sqlite";
@@ -20,7 +18,7 @@ static NSString *const AAHttpRequestCache = @"AA_httpRequestCache.sqlite";
     FMDatabase *db;
     NSString *SQLTableName;
 }
-
+ 
 + (instancetype)share{
     static AAHTTPModelCache *ADcache;
     static dispatch_once_t onceToken;
@@ -44,7 +42,7 @@ static NSString *const AAHttpRequestCache = @"AA_httpRequestCache.sqlite";
     db = [FMDatabase databaseWithPath:self.dbPath];
     if ([db open]) {
         
-        NSString *sql = [NEHTTPModel modelToCreateSql:SQLTableName primaryKey:@"myID"];
+        NSString *sql = [AAHTTPModel modelToCreateSql:SQLTableName primaryKey:@"myID"];
         
         BOOL res = [db executeUpdate:sql];
         if (!res) {
@@ -57,7 +55,7 @@ static NSString *const AAHttpRequestCache = @"AA_httpRequestCache.sqlite";
         NSLog(@"error when open db");
     }
 }
-- (void)addModel:(NEHTTPModel *)model{
+- (void)addModel:(AAHTTPModel *)model{
     if ([db open]) {
         NSMutableDictionary *dict = [model InsertSQLKeyAndValues];
         NSString *sql = [NSString stringWithFormat:@"INSERT INTO %@(%@) VALUES (%@);",SQLTableName,dict[@"key"], dict[@"question"]];
@@ -79,7 +77,7 @@ static NSString *const AAHttpRequestCache = @"AA_httpRequestCache.sqlite";
         NSString *sql = [NSString stringWithFormat:@"select *from %@",SQLTableName];
         FMResultSet *rs = [db executeQuery:sql];
         while ([rs next]) {
-            NEHTTPModel *model=[[NEHTTPModel alloc] init];
+            AAHTTPModel *model=[[AAHTTPModel alloc] init];
             model.myID=[rs doubleForColumn:@"myID"];
             model.startDateString=[rs stringForColumn:@"startDateString"];
             model.startTimestamp=[rs stringForColumn:@"startTimestamp"];
@@ -102,7 +100,7 @@ static NSString *const AAHttpRequestCache = @"AA_httpRequestCache.sqlite";
         [db close];
     }
     
-    NSArray *temp = [array sortedArrayUsingComparator:^NSComparisonResult(NEHTTPModel *  _Nonnull obj1, NEHTTPModel *  _Nonnull obj2) {
+    NSArray *temp = [array sortedArrayUsingComparator:^NSComparisonResult(AAHTTPModel *  _Nonnull obj1, AAHTTPModel *  _Nonnull obj2) {
         NSInteger ob1 = [obj1.startTimestamp integerValue];
         NSInteger ob2 = [obj2.startTimestamp integerValue];
         if (ob2 > ob1) {

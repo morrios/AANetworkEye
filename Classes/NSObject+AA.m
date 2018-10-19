@@ -8,7 +8,7 @@
 
 #import "NSObject+AA.h"
 #import <objc/runtime.h>
-
+  
 @implementation NSObject (AA)
 
 + (NSMutableArray *)modelToArray{
@@ -33,7 +33,7 @@
             [dict setObject:type forKey:@"type"];
             [array addObject:dict];
         }
-
+  
     }
     NSLog(@"array = %@",array);
     return array;

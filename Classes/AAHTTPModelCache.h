@@ -7,11 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "NEHTTPModel.h"
+#import "AAHTTPModel.h"
+#import <FMDB/FMDatabase.h>
 
 @interface AAHTTPModelCache : NSObject
 + (instancetype)share;
-- (void)addModel:(NEHTTPModel *)model;
+- (void)addModel:(AAHTTPModel *)model;
 - (NSMutableArray *)allobjects;
 - (void)cleanAllRecode;
 

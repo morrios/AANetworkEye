@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "FMDatabase.h"
 
 @interface NSObject (AA)
 + (NSMutableArray *)modelToArray;
@@ -18,3 +17,4 @@
 - (NSString *)getClassName;
 
 @end
+ 

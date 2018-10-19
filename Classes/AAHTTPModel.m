@@ -1,21 +1,20 @@
 //
-//  NEHTTPModel.m
-//  NetworkEye
+//  AAHTTPModel.m
+//  merchant
 //
-//  Created by coderyi on 15/11/4.
-//  Copyright © 2015年 coderyi. All rights reserved.
+//  Created by beequick on 2018/10/18.
+//  Copyright © 2018 beequick. All rights reserved.
 //
 
-#import "NEHTTPModel.h"
+#import "AAHTTPModel.h"
 
-@implementation NEHTTPModel
-@synthesize ne_request,ne_response;
-
--(void)setNe_request:(NSURLRequest *)ne_request_new{
-    ne_request=ne_request_new;
-    self.requestURLString=[ne_request.URL absoluteString];
+@implementation AAHTTPModel
+@synthesize aa_request,aa_response;
+- (void)setAa_request:(NSURLRequest *)aa_request_new{
+    aa_request=aa_request_new;
+    self.requestURLString=[aa_request.URL absoluteString];
     
-    switch (ne_request.cachePolicy) {
+    switch (aa_request.cachePolicy) {
         case 0:
             self.requestCachePolicy=@"NSURLRequestUseProtocolCachePolicy";
             break;
@@ -39,11 +38,11 @@
             break;
     }
     
-    self.requestTimeoutInterval=[[NSString stringWithFormat:@"%.1lf",ne_request.timeoutInterval] doubleValue];
-    self.requestHTTPMethod=ne_request.HTTPMethod;
+    self.requestTimeoutInterval=[[NSString stringWithFormat:@"%.1lf",aa_request.timeoutInterval] doubleValue];
+    self.requestHTTPMethod=aa_request.HTTPMethod;
     
-    for (NSString *key in [ne_request.allHTTPHeaderFields allKeys]) {
-        self.requestAllHTTPHeaderFields=[NSString stringWithFormat:@"%@%@:%@\n",self.requestAllHTTPHeaderFields,key,[ne_request.allHTTPHeaderFields objectForKey:key]];
+    for (NSString *key in [aa_request.allHTTPHeaderFields allKeys]) {
+        self.requestAllHTTPHeaderFields=[NSString stringWithFormat:@"%@%@:%@\n",self.requestAllHTTPHeaderFields,key,[aa_request.allHTTPHeaderFields objectForKey:key]];
     }
     if (self.requestAllHTTPHeaderFields.length>1) {
         if ([[self.requestAllHTTPHeaderFields substringFromIndex:self.requestAllHTTPHeaderFields.length-1] isEqualToString:@"\n"]) {
@@ -55,14 +54,14 @@
             self.requestAllHTTPHeaderFields=[self.requestAllHTTPHeaderFields substringFromIndex:6];
         }
     }
-
-    if ([ne_request HTTPBody].length>512) {
+    
+    if ([aa_request HTTPBody].length>512) {
         self.requestHTTPBody=@"requestHTTPBody too long";
     }else{
         if ([self.requestHTTPMethod isEqualToString:@"POST"]) {
-            if (![ne_request HTTPBody]) {
+            if (![aa_request HTTPBody]) {
                 uint8_t d[1024] = {0};
-                NSInputStream *stream = self.ne_request.HTTPBodyStream;
+                NSInputStream *stream = self.aa_request.HTTPBodyStream;
                 NSMutableData *data = [[NSMutableData alloc] init];
                 [stream open];
                 while ([stream hasBytesAvailable]) {
@@ -78,20 +77,20 @@
             }
             
         }else{
-            self.requestHTTPBody=[[NSString alloc] initWithData:[ne_request HTTPBody] encoding:NSUTF8StringEncoding];
+            self.requestHTTPBody=[[NSString alloc] initWithData:[aa_request HTTPBody] encoding:NSUTF8StringEncoding];
             
         }
     }
     
-
+    
     
     if (self.requestHTTPBody.length>1) {
         if ([[self.requestHTTPBody substringFromIndex:self.requestHTTPBody.length-1] isEqualToString:@"\n"]) {
             self.requestHTTPBody=[self.requestHTTPBody substringToIndex:self.requestHTTPBody.length-1];
         }
     }
-    
 }
+
 - (NSString *)dataToReadStr:(NSData*)data{
     if (data == nil) {
         
@@ -119,13 +118,13 @@
             newStr = [NSString stringWithFormat:@"%@%@",newStr,sub];
         }
         newStr = [NSString stringWithFormat:@"%@}",newStr];
-
+        
         
         NSData *jsonData = [newStr dataUsingEncoding:NSUTF8StringEncoding];
         NSError *err;
         NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:jsonData
-                                                            options:NSJSONReadingMutableContainers
-                                                              error:&err];
+                                                             options:NSJSONReadingMutableContainers
+                                                               error:&err];
         NSData *newdata=[NSJSONSerialization dataWithJSONObject:dict
                                                         options:NSJSONWritingPrettyPrinted
                                                           error:nil];
@@ -148,10 +147,8 @@
     }
     return jsonStr;
 }
-
-- (void)setNe_response:(NSHTTPURLResponse *)ne_response_new {
-    
-    ne_response=ne_response_new;
+- (void)setAa_response:(NSHTTPURLResponse *)aa_response_new {
+    aa_response=aa_response_new;
     
     self.responseMIMEType=@"";
     self.responseExpectedContentLength=@"";
@@ -160,14 +157,14 @@
     self.responseStatusCode=200;
     self.responseAllHeaderFields=@"";
     
-    self.responseMIMEType=[ne_response MIMEType];
-    self.responseExpectedContentLength=[NSString stringWithFormat:@"%lld",[ne_response expectedContentLength]];
-    self.responseTextEncodingName=[ne_response textEncodingName];
-    self.responseSuggestedFilename=[ne_response suggestedFilename];
-    self.responseStatusCode=(int)ne_response.statusCode;
+    self.responseMIMEType=[aa_response MIMEType];
+    self.responseExpectedContentLength=[NSString stringWithFormat:@"%lld",[aa_response expectedContentLength]];
+    self.responseTextEncodingName=[aa_response textEncodingName];
+    self.responseSuggestedFilename=[aa_response suggestedFilename];
+    self.responseStatusCode=(int)aa_response.statusCode;
     
-    for (NSString *key in [ne_response.allHeaderFields allKeys]) {
-        NSString *headerFieldValue=[ne_response.allHeaderFields objectForKey:key];
+    for (NSString *key in [aa_response.allHeaderFields allKeys]) {
+        NSString *headerFieldValue=[aa_response.allHeaderFields objectForKey:key];
         if ([key isEqualToString:@"Content-Security-Policy"]) {
             if ([[headerFieldValue substringFromIndex:12] isEqualToString:@"'none'"]) {
                 headerFieldValue=[headerFieldValue substringToIndex:11];
@@ -183,12 +180,12 @@
         }
     }
 }
+
 - (NSString *)startTimestamp{
     if(!_startTimestamp){
         _startTimestamp = @"000";
     }
     return _startTimestamp;
 }
-
 
 @end

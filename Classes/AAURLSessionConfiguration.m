@@ -20,7 +20,7 @@
     });
     return staticConfiguration;
     
-}
+} 
 - (instancetype)init {
     self = [super init];
     if (self) {
