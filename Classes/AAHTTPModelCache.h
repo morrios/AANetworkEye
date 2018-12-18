@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "AAHTTPModel.h"
 #import <FMDB/FMDatabase.h>
+#import <FMDB/FMDatabaseQueue.h>
+
 
 @interface AAHTTPModelCache : NSObject
 + (instancetype)share;

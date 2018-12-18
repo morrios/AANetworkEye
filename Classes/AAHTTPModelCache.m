@@ -16,9 +16,10 @@ static NSString *const AAHttpRequestCache = @"AA_httpRequestCache.sqlite";
 @end
 @implementation AAHTTPModelCache{
     FMDatabase *db;
+    FMDatabaseQueue *dbQueue;
     NSString *SQLTableName;
 }
- 
+
 + (instancetype)share{
     static AAHTTPModelCache *ADcache;
     static dispatch_once_t onceToken;
@@ -40,17 +41,19 @@ static NSString *const AAHttpRequestCache = @"AA_httpRequestCache.sqlite";
 // 建表
 - (void)createTable {
     db = [FMDatabase databaseWithPath:self.dbPath];
+    dbQueue = [FMDatabaseQueue databaseQueueWithPath:self.dbPath];
     if ([db open]) {
-        
         NSString *sql = [AAHTTPModel modelToCreateSql:SQLTableName primaryKey:@"myID"];
-        
-        BOOL res = [db executeUpdate:sql];
-        if (!res) {
-            NSLog(@"error when creating db table");
-        } else {
-            NSLog(@"success to creating db table");
-        }
+        [dbQueue inDatabase:^(FMDatabase * _Nonnull db) {
+            BOOL res = [db executeUpdate:sql];
+            if (!res) {
+                NSLog(@"error when creating db table");
+            } else {
+                NSLog(@"success to creating db table");
+            }
+        }];
         [db close];
+        
     } else {
         NSLog(@"error when open db");
     }
@@ -59,45 +62,54 @@ static NSString *const AAHttpRequestCache = @"AA_httpRequestCache.sqlite";
     if ([db open]) {
         NSMutableDictionary *dict = [model InsertSQLKeyAndValues];
         NSString *sql = [NSString stringWithFormat:@"INSERT INTO %@(%@) VALUES (%@);",SQLTableName,dict[@"key"], dict[@"question"]];
-        [db executeUpdate:sql withArgumentsInArray:[dict[@"value"] copy]];
-        [db close];
+        [dbQueue inDatabase:^(FMDatabase * _Nonnull db) {
+            [db executeUpdate:sql withArgumentsInArray:[dict[@"value"] copy]];
+            [db close];
+            
+        }];
     }
 }
 - (void)cleanAllRecode{
     if ([db open]) {
         NSString *sqlStr = [NSString stringWithFormat:@"DELETE FROM %@", SQLTableName];
-        [db executeUpdate:sqlStr];
-        [db close];
+        [dbQueue inDatabase:^(FMDatabase * _Nonnull db) {
+            [db executeUpdate:sqlStr];
+            [db close];
+        }];
+        
     }
 }
 - (NSMutableArray *)allobjects{
     NSMutableArray *array=[NSMutableArray array];
-
+    
     if ([db open]) {
-        NSString *sql = [NSString stringWithFormat:@"select *from %@",SQLTableName];
-        FMResultSet *rs = [db executeQuery:sql];
-        while ([rs next]) {
-            AAHTTPModel *model=[[AAHTTPModel alloc] init];
-            model.myID=[rs doubleForColumn:@"myID"];
-            model.startDateString=[rs stringForColumn:@"startDateString"];
-            model.startTimestamp=[rs stringForColumn:@"startTimestamp"];
-            model.endDateString=[rs stringForColumn:@"endDateString"];
-            model.requestURLString=[rs stringForColumn:@"requestURLString"];
-            model.requestCachePolicy=[rs stringForColumn:@"requestCachePolicy"];
-            model.requestTimeoutInterval=[rs doubleForColumn:@"requestTimeoutInterval"];
-            model.requestHTTPMethod=[rs stringForColumn:@"requestHTTPMethod"];
-            model.requestAllHTTPHeaderFields=[rs stringForColumn:@"requestAllHTTPHeaderFields"];
-            model.requestHTTPBody=[rs stringForColumn:@"requestHTTPBody"];
-            model.responseMIMEType=[rs stringForColumn:@"responseMIMEType"];
-            model.responseExpectedContentLength=[rs stringForColumn:@"responseExpectedContentLength"];
-            model.responseTextEncodingName = [rs stringForColumn:@"responseTextEncodingName"];
-            model.responseSuggestedFilename=[rs stringForColumn:@"responseSuggestedFilename"];
-            model.responseStatusCode=[rs intForColumn:@"responseStatusCode"];
-            model.responseAllHeaderFields=[rs stringForColumn:@"responseAllHeaderFields"];
-            model.receiveJSONData=[rs stringForColumn:@"receiveJSONData"];
-            [array addObject:model];
-        }
-        [db close];
+        [dbQueue inDatabase:^(FMDatabase * _Nonnull db) {
+            NSString *sql = [NSString stringWithFormat:@"select *from %@",self->SQLTableName];
+            FMResultSet *rs = [db executeQuery:sql];
+            while ([rs next]) {
+                AAHTTPModel *model=[[AAHTTPModel alloc] init];
+                model.myID=[rs doubleForColumn:@"myID"];
+                model.startDateString=[rs stringForColumn:@"startDateString"];
+                model.startTimestamp=[rs stringForColumn:@"startTimestamp"];
+                model.endDateString=[rs stringForColumn:@"endDateString"];
+                model.requestURLString=[rs stringForColumn:@"requestURLString"];
+                model.requestCachePolicy=[rs stringForColumn:@"requestCachePolicy"];
+                model.requestTimeoutInterval=[rs doubleForColumn:@"requestTimeoutInterval"];
+                model.requestHTTPMethod=[rs stringForColumn:@"requestHTTPMethod"];
+                model.requestAllHTTPHeaderFields=[rs stringForColumn:@"requestAllHTTPHeaderFields"];
+                model.requestHTTPBody=[rs stringForColumn:@"requestHTTPBody"];
+                model.responseMIMEType=[rs stringForColumn:@"responseMIMEType"];
+                model.responseExpectedContentLength=[rs stringForColumn:@"responseExpectedContentLength"];
+                model.responseTextEncodingName = [rs stringForColumn:@"responseTextEncodingName"];
+                model.responseSuggestedFilename=[rs stringForColumn:@"responseSuggestedFilename"];
+                model.responseStatusCode=[rs intForColumn:@"responseStatusCode"];
+                model.responseAllHeaderFields=[rs stringForColumn:@"responseAllHeaderFields"];
+                model.receiveJSONData=[rs stringForColumn:@"receiveJSONData"];
+                [array addObject:model];
+            }
+            [db close];
+        }];
+        
     }
     
     NSArray *temp = [array sortedArrayUsingComparator:^NSComparisonResult(AAHTTPModel *  _Nonnull obj1, AAHTTPModel *  _Nonnull obj2) {
