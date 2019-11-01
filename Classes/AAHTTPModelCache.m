@@ -47,15 +47,15 @@ static NSString *const AAHttpRequestCache = @"AA_httpRequestCache.sqlite";
         [dbQueue inDatabase:^(FMDatabase * _Nonnull db) {
             BOOL res = [db executeUpdate:sql];
             if (!res) {
-                NSLog(@"error when creating db table");
+//                NSLog(@"error when creating db table");
             } else {
-                NSLog(@"success to creating db table");
+//                NSLog(@"success to creating db table");
             }
         }];
         [db close];
         
     } else {
-        NSLog(@"error when open db");
+//        NSLog(@"error when open db");
     }
 }
 - (void)addModel:(AAHTTPModel *)model{

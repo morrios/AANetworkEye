@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "AANetworkEye"
-  s.version      = "0.3"
+  s.version      = "0.4"
   s.summary      = "iOS 网络监控"
 
   s.description  = <<-DESC
